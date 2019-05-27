@@ -1,7 +1,7 @@
 #!/bin/bash -p
 
 ##cosmetic functions and Variables
-password=onukak
+
 #TERM not recognised in called script
 export TERM=linux
 #clear the page for readabillity
@@ -36,6 +36,8 @@ printf "${BLUE}Connect started on $(date)${NC}\n "
 BR
 
 ##The actual code
+printf "${YELLOW}Please enter the sudo password${NC}\n"
+read -s password
 
 #Checking for Bridge100
 function checkBR100 {
