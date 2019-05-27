@@ -1,0 +1,38 @@
+#!/bin/bash -p
+
+##cosmetic functions and Variables
+
+#TERM not recognised in called script
+export TERM=linux
+#clear the page for readabillity
+clear
+
+##Colors
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+BLUE='\033[0;34m'
+
+##Break function for readabillity
+function BR {
+    echo "  "
+}
+
+##DoubleBreak function for readabillity
+function DBR {
+  echo " "
+  echo " "
+}
+
+#Paths
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
+
+##Actual code
+printf "${GREEN}AutoExec on disconnect${NC}\n"
+printf "${BLUE}Disconnect started on $(date)${NC}\n "
+printf "${YELLOW}$ECID Disconnected${NC}\n"
+
+#write to the logFile
+echo -e "-$(date)\n Device: $ECID\n Disconnected\n"  >> $DIR/Logs/autoExecLog.txt

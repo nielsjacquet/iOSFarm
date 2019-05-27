@@ -1,0 +1,259 @@
+#!/bin/bash
+
+##cosmetic functions and Variables
+
+##Colors
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+BLUE='\033[0;34m'
+
+##Break function for readabillity
+function BR {
+  echo "  "
+}
+
+##DoubleBreak function for readabillity
+function DBR {
+  echo " "
+  echo " "
+}
+
+##paths:
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+TSS="$DIR/tsschecker_macos"
+GetBlobFromFile="$DIR/GetBlobFromFile"
+autoexecA="$DIR/autoexecA"
+autoexecD="$DIR/autoexecD"
+CreateDeviceList="$DIR/CreateDeviceList"
+StartExec="$DIR/StartExec"
+
+##URLs
+URL="http://jakkie.be/OSX"
+
+##arrays
+textArray=()
+##Variables
+ok=0
+ac=0 #presence of appleConfigurator
+hb=0 #presence of homebrew
+md=0 #presence of mobiledevice
+tc=0 #presence of tsschecker_macos
+bs=0 #presence of blobscript
+aa=0 #presence of autoexecA
+ad=0 #presence of autoexecD
+cdl=0 #presence of CreateDeviceList
+se=0 #presence of StartExec
+
+bsdl=0 #blobscript download
+
+##prerequisites Check
+printf "${YELLOW}Checking the prerequisites for the iOSFarm scripts${NC}\n"
+BR
+
+##check for apple Configurator
+function appleConfigurator {
+  if open -Ra "apple Configurator 2"
+  then
+    printf "${GREEN}VERIFIED: 'apple Configurator 2' is installed${NC}\n"
+    BR
+    ((ok++))
+    ac=1
+  else
+    printf "${RED}ERROR: 'apple Configurator 2' is not installed${NC}\n"
+    printf "${YELLOW}go to: https://itunes.apple.com/be/app/apple-configurator-2/id1037126344?mt=12 and install the app${NC}\n"
+    BR
+    textArray+=( "Please install apple Configurator 2, go to: https://itunes.apple.com/be/app/apple-configurator-2/id1037126344?mt=12" )
+  fi
+
+}
+
+##check for Homebrew
+function homebrew {
+  which -s brew
+  if [[ $? != 0 ]] ; then
+    printf "${RED}ERROR: 'Homebrew' is not installed${NC}\n"
+    printf "${GREEN}installing Homebrew${NC}\n"
+    BR
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    ((ok++))
+  else
+    ##brew update
+    printf "${GREEN}VERIFIED: 'Homebrew' is installed${NC}\n"
+    BR
+    ((ok++))
+    hb=1
+  fi
+}
+
+##check for mobiledevice
+function mobiledevice {
+  which -s mobiledevice
+  if [[ $? != 0 ]] ; then
+    printf "${RED}ERROR: 'mobiledevice' is not installed${NC}\n"
+    printf "${YELLOW}Installing mobiledevice${NC}\n"
+    BR
+    brew install mobiledevice
+    ((ok++))
+    mobiledevice
+  else
+    printf "${GREEN}VERIFIED: 'mobiledevice' is installed${NC}\n"
+    BR
+    ((ok++))
+    md=1
+  fi
+}
+
+##check for tsschecker_macos
+function tsschecker_macos {
+  if [ -e "$TSS" ]
+  then
+    printf "${GREEN}VERIFIED: 'tsschecker_macos' is present${NC}\n"
+    BR
+    chmod u+x $DIR/tsschecker_macos
+    ((ok++))
+    tc=1
+  else
+    printf "${RED}ERROR: 'tsschecker_macos' is abscent${NC}\n"
+    BR
+    printf "${YELLOW}Downloading tsschecker_macos\n"
+    BR
+    curl -O $URL/tsschecker_macos
+    printf "${NC}\n"
+    ((ok++))
+    tsschecker_macos
+  fi
+}
+
+##check for blobscript
+function blobscript {
+  if [ -e "$GetBlobFromFile" ]
+  then
+    printf "${GREEN}VERIFIED: 'GetBlobFromFile' is present${NC}\n"
+    BR
+    chmod u+x $GetBlobFromFile
+    ((ok++))
+    bs=1
+  else
+    printf "${RED}ERROR: 'GetBlobFromFile' is abscent${NC}\n"
+    BR
+    printf "${YELLOW}Downloading GetBlob\n"
+    BR
+    curl -O $URL/GetBlobFromFile
+    printf "${NC}\n"
+    ((ok++))
+    blobscript
+  fi
+}
+
+##check for autoexecA
+function autoexecA {
+  if [ -e "$autoexecA" ]
+  then
+    printf "${GREEN}VERIFIED: 'autoexecA' is present${NC}\n"
+    BR
+    chmod u+x $autoexecA
+    ((ok++))
+    aa=1
+  else
+    printf "${RED}ERROR: 'autoexecA' is abscent${NC}\n"
+    BR
+    printf "${YELLOW}Downloading autoexecA\n"
+    BR
+    curl -O $URL/autoexecA
+    printf "${NC}\n"
+    ((ok++))
+    autoexecA
+  fi
+}
+
+##check for autoexecD
+function autoexecD {
+  if [ -e "$autoexecD" ]
+  then
+    printf "${GREEN}VERIFIED: 'autoexecD' is present${NC}\n"
+    BR
+    chmod u+x $autoexecD
+    ((ok++))
+    ad=1
+  else
+    printf "${RED}ERROR: 'autoexecD' is abscent${NC}\n"
+    BR
+    printf "${YELLOW}Downloading autoexecD\n"
+    BR
+    curl -O $URL/autoexecD
+    printf "${NC}\n"
+    ((ok++))
+    autoexecD
+  fi
+}
+
+##check for CreateDeviceList
+function CreateDeviceList {
+  if [ -e "$CreateDeviceList" ]
+  then
+    printf "${GREEN}VERIFIED: 'CreateDeviceList' is present${NC}\n"
+    BR
+    chmod u+x $CreateDeviceList
+    ((ok++))
+    cdl=1
+  else
+    printf "${RED}ERROR: 'CreateDeviceList' is abscent${NC}\n"
+    BR
+    printf "${YELLOW}Downloading CreateDeviceList\n"
+    BR
+    curl -O $URL/CreateDeviceList
+    printf "${NC}\n"
+    ((ok++))
+    autoexecD
+  fi
+}
+
+##check for StartExec
+function StartExec {
+  if [ -e "$StartExec" ]
+  then
+    printf "${GREEN}VERIFIED: 'StartExec' is present${NC}\n"
+    BR
+    chmod u+x $StartExec
+    ((ok++))
+    se=1
+  else
+    printf "${RED}ERROR: 'StartExec' is abscent${NC}\n"
+    BR
+    printf "${YELLOW}Downloading StartExec\n"
+    BR
+    curl -O $URL/StartExec
+    printf "${NC}\n"
+    ((ok++))
+    autoexecD
+  fi
+}
+
+appleConfigurator
+homebrew
+mobiledevice
+tsschecker_macos
+blobscript
+autoexecA
+autoexecD
+CreateDeviceList
+StartExec
+
+##final check
+if [ $ac == 1 ] && [ $hb == 1 ] && [ $md == 1 ] && [ $tc == 1 ] && [ $bs == 1 ] && [ $aa == 1 ] && [ $ad == 1 ] && [ $cdl == 1 ] && [ $se == 1 ]
+then
+  printf "${GREEN}All prerequisites are met. Have fun using the iOS farm!${NC}\n"
+else
+  if [[ $ok != 9 ]]
+  then
+    printf "${RED}Some issues are found in the prerequisites please solve them and rerun the script${NC}\n"
+    BR
+    for index  in ${!textArray[*]}
+    do
+      printf "${RED}${textArray[$index]}${NC}\n"
+      BR
+    done
+  fi
+fi

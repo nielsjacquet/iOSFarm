@@ -1,0 +1,140 @@
+#!/bin/bash
+
+##Savepath for the blob
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
+##path to TSSCHEKER
+tssPath="$DIR/tsschecker_macos"
+##path to save the file
+csvpath="$DIR/Lists/DeviceList.csv"
+
+##predeclared Variables
+deviceType=""
+ECID=""
+serial=""
+devicemodel=""
+
+##cosmetic functions and Variables
+
+##Colors
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+BLUE='\033[0;34m'
+
+##Break function for readabillity
+function BR {
+  echo "  "
+}
+
+##DoubleBreak function for readabillity
+function DBR {
+  echo " "
+  echo " "
+}
+
+##the actual code
+##---------------
+
+function openNeededApps {
+  BR
+  printf "${GREEN}Opening 'apple Configurator 2' in the background ${NC}\n"
+  open -j -a "apple Configurator 2"
+}
+
+function GetECID {
+  ##Get the connectionlist (only names)
+  str=$(cfgutil list)
+  ##define the delimiter
+  delimiter=" "
+  ##concat the string and delimiter
+  s=$str$delimiter
+  ##create the array
+  deviceArray=()
+  ##populate Array
+  while [[ $s ]]
+  do
+    deviceArray+=( "${s%%"$delimiter"**}" )
+    s=${s#*"$delimiter"}
+  done
+
+
+  ##Variables
+  searchValue="ECID:"
+  deviceArrayLength=${#deviceArray[@]}
+  startECIDSearch=0
+  ECIDarray=()
+
+  ##put the usblist in array
+  while [ $startECIDSearch -lt $deviceArrayLength ]
+  do
+    if [[ ${deviceArray[$startECIDSearch]} == *$searchValue* ]] #search in the array for ECID
+    then
+      ##the ECID number is located in the next array space
+      TR=$(($startECIDSearch + 1))
+      ECIDval=${deviceArray[$TR]}
+
+      ##Clean up of the ECID number
+      function ECIDClean2 {
+        echo ${ECIDval%??????}
+      }
+      ECID=$(ECIDClean2)
+      #  echo $ECID
+      ##put ECID in array
+      ECIDarray+=("$ECID")
+    fi
+    ((startECIDSearch++))
+  done
+
+
+  BR
+  printf "${GREEN}Connected devices:${NC}\n"
+  printf "${YELLOW}indexnr   ECID${NC}\n"
+
+  for index  in ${!ECIDarray[*]}
+  do
+    echo $index "        "${ECIDarray[$index]}
+  done
+  BR
+  BR
+}
+
+function WriteDone {
+  printf "${GREEN}Done Wrinting the data${NC}\n"
+}
+
+function WriteData() {
+  printf "${GREEN}Getting data for ${NC}$1\n"
+  ##getting the data from the ECID
+  deviceType=$(cfgutil -e $1 get deviceType)
+  echo devicetype: $deviceType
+  UDID=$(cfgutil -e $1 get UDID)
+  echo UDID: $UDID
+  serial=$(cfgutil -e $1 get serialNumber)
+  echo serialNumber: $serial
+  deviceModel=$(mobiledevice get_device_prop -u $UDID HardwareModel)
+  echo deviceModel: $deviceModel
+  ((startGetData++))
+  printf "${GREEN}Writing the data to ${NC}$csvpath\n"
+  echo "$1;$UDID;$serial;$deviceType;$deviceModel" >> $csvpath
+  BR
+}
+
+function compareData {
+  for device in ${ECIDarray[@]}
+  do
+    if cat $csvpath | grep $device
+    then
+      printf "${GREEN}This device appears to be in the DeviceList${NC}\n"
+    else
+      printf "${YELLOW}Device does not appear in the DeviceList${NC}\n"
+      printf "${GREEN}Proceeding to add the device in the list${NC}\n"
+      WriteData $device
+    fi
+  done
+  WriteDone
+}
+openNeededApps
+GetECID
+compareData

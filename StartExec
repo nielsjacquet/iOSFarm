@@ -1,0 +1,38 @@
+#!/bin/bash
+
+##cosmetic functions and Variables
+##Colors
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+BLUE='\033[0;34m'
+
+##Break function for readabillity
+function BR {
+  echo "  "
+}
+
+##DoubleBreak function for readabillity
+function DBR {
+  echo " "
+  echo " "
+}
+
+###Paths
+
+##Scriptfolder path
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
+#function to open other apps/scripts to execute the script
+function openNeededApps {
+  BR
+  printf "${GREEN}Opening 'apple Configurator 2' in the background ${NC}\n"
+  open -j -a "apple Configurator 2"
+}
+
+#call the openapps function
+openNeededApps
+
+#cfgutil executes scripts on connent or disconnect of devices
+cfgutil exec -a  $DIR/autoexecA -d $DIR/autoexecD

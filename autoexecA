@@ -1,0 +1,229 @@
+#!/bin/bash -p
+
+##cosmetic functions and Variables
+password=onukak
+#TERM not recognised in called script
+export TERM=linux
+#clear the page for readabillity
+clear
+
+##Colors
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+BLUE='\033[0;34m'
+
+##Break function for readabillity
+function BR {
+  echo "  "
+}
+
+##DoubleBreak function for readabillity
+function DBR {
+  echo " "
+  echo " "
+}
+
+#Paths
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+deviceFile="$DIR/Lists/DeviceList.csv"
+
+
+##Information for the user
+printf "${GREEN}AutoExec on connect${NC}\n"
+printf "${BLUE}Connect started on $(date)${NC}\n "
+BR
+
+##The actual code
+
+#Checking for Bridge100
+function checkBR100 {
+  ##Get the connectionlis (only names)
+  str=$(ifconfig -l -u)
+  ##define the delimiter
+  delimiter=" "
+  ##concat the string and delimiter
+  s=$str$delimiter
+  ##create the array
+  arrayConnections=();
+  ##bridge100 present var
+  bridge100="false"
+  ##populate Array
+  while [[ $s ]]; do
+    arrayConnections+=( "${s%%"$delimiter"*}" );
+    s=${s#*"$delimiter"};
+  done;
+  ##
+  for index  in ${!arrayConnections[*]}
+  do
+    if [[ ${arrayConnections[$index]} == "bridge100" ]]
+    then
+      bridge100="true"
+    fi
+  done
+  ##case for bridge100
+  case $bridge100 in
+    true)
+    printf "${GREEN}Bridge100 present${NC}\n"
+    BR
+    ;;
+    false)
+    noBR100
+    ;;
+  esac
+}
+
+#If bridge100 does not exists
+function noBR100 {
+  printf "${RED}bridge100 is not present${NC}\n"
+  BR
+  pause 'Press [Enter] key to continue...'
+  printf "${GREEN}please attach a known iOS device to the mac"
+  DBR
+  printf "Step 1: Open the system preferences"
+  DBR
+  printf "Step 2: Go to sharing"
+  DBR
+  printf "Step 3: In sharing click on internet sharing"
+  DBR
+  printf "Step 4: Pick a source in share your connection from..."
+  DBR
+  printf "Step 5: check the ckeckbox from the know iOS device in"
+  BR
+  printf "        To computers using..."
+  DBR
+  printf "Step 6: Enable the internet sharing${NC}\n"
+  DBR
+  printf "${YELLOW}If you followed the instructions"
+  BR
+  printf "press R for (R)estart the test or X to e(X)it{NC}\n"
+  BR
+  read noBR100ui
+
+  ##Case for noBR100ui
+  case $noBR100ui in
+    r)
+    echo r
+    checkBR100
+    ;;
+    R)
+    echo R
+    checkBR100
+    ;;
+    x)
+    echo x
+    ;;
+    X)
+    echo X
+    ;;
+  esac
+}
+
+
+#call the check br100 function
+checkBR100
+
+#conversion from ECID environement Variables to MAC address via cfgutil
+function ECIDToMAC {
+  macAddressFull=$(cfgutil -e $ECID get wifiAddress)
+  echo $macAddressFull
+}
+macAddressFullFromFunction=$(ECIDToMAC)
+printf "${GREEN}Getting MACaddress: $macAddressFullFromFunction${NC}\n"
+
+#remove the first 3 characters and the last 3 characters
+function macClean {
+  echo $macAddressFullFromFunction | cut -d ":" -f 2,3,4,5
+}
+macCleanFunction=$(macClean)
+printf "${GREEN}Clean up the MACaddress: $macCleanFunction${NC}\n"
+
+#fetching network connenction from shortend MAC address
+function USBConnectionName {
+  USBConnectionNameFull=$(ifconfig | grep -1 $macCleanFunction)
+  echo $USBConnectionNameFull
+}
+USBConnectionNameFullFromFuncion=$(USBConnectionName)
+printf "${GREEN}Getting the network name from the USB connection${NC}\n $USBConnectionNameFullFromFuncion\n"
+BR
+
+#parse only the network name from the network connection
+function USBConnectionNameShort {
+  USBConnectionNameCutoff=${USBConnectionNameFullFromFuncion%%:*}
+  echo $USBConnectionNameCutoff
+}
+EN=$(USBConnectionNameShort)
+printf "${GREEN}Parsing only the connection name: $EN${NC}\n"
+BR
+
+#function to add the "enxx" to bridge100
+function addToBridge {
+  printf "${YELLOW}adding ${GREEN} $EN ${YELLOW} to ${GREEN} bridge100 ${NC} \n "
+  BR
+  ##add the en to bridge100
+  echo $password | sudo -S ifconfig bridge100 addm $EN
+  BR
+  printf "${GREEN}$EN Status information:${NC}\n"
+  ifconfig $EN
+  BR
+  ##bring the en down
+  echo $password | sudo -S ifconfig $EN down
+  printf "${GREEN}$EN bring it down${NC}\n"
+  ifconfig $EN
+  BR
+  sleep 10
+  ##bring the en up
+  echo $password | sudo -S ifconfig $EN up
+  sleep 5
+  printf "${GREEN}$EN bring it up${NC}\n"
+  ##check ifconfig
+  ifconfig $EN
+  BR
+  printf "${GREEN}DONE${NC}\n"
+}
+
+#call the addToBridge function
+addToBridge
+
+##Blob
+
+function blob {
+  if cat $deviceFile | grep $ECID
+  then
+    printf "${GREEN}Phone present in the BLOB database${NC}\n"
+  else
+    printf "${GREEN}Phone not yet in the BLOB database${NC}\n"
+    printf "${GREEN}Getting data for ${NC}$ECID\n"
+    ##getting the data from the ECID
+    deviceType=$(cfgutil -e $ECID get deviceType)
+    echo devicetype: $deviceType
+    UDID=$(cfgutil -e $ECID get UDID)
+    echo UDID: $UDID
+    serial=$(cfgutil -e $ECID get serialNumber)
+    echo serialNumber: $serial
+    deviceModel=$(mobiledevice get_device_prop -u $UDID HardwareModel)
+    echo deviceModel: $deviceModel
+    printf "${GREEN}Writing the data to ${NC}$deviceFile\n"
+    echo "$ECID;$UDID;$serial;$deviceType;$deviceModel" >> $deviceFile
+  fi
+}
+blob
+
+#output Log
+#function to get serialNumber
+function getSerialNumber {
+  serialNumber=$(cfgutil -e $ECID get serialNumber)
+  echo $serialNumber
+}
+sn=$(getSerialNumber)
+
+#funtion to get bridge100 for logging
+function br100Log {
+  br100LogText= ifconfig bridge100
+  echo $br100LogText
+}
+br100txt=$(br100Log)
+
+#echo to write to logfile
+echo -e "-$(date)\n Device: $ECID\n NetworkName: $EN\n serialNumber: $sn\n Connected to :\n $br100txt \n"  >> $DIR/Logs/autoExecLog.txt
