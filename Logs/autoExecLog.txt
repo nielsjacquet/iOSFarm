@@ -2202,3 +2202,59 @@
 	media: autoselect
 	status: active 
 
+-Thu Jul 18 14:44:30 CEST 2019
+ Device: 0x162430282A0326
+ NetworkName: en43
+ serialNumber: 
+ Connected to :
+  
+
+-Tue Oct  8 13:50:51 CEST 2019
+ Device: 0x818C828F81C26
+ NetworkName: en3
+ serialNumber: DNQQRWQ7GRY9
+ Connected to :
+ bridge100: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=3<RXCSUM,TXCSUM>
+	ether c6:b3:01:bb:27:64 
+	inet 192.168.2.1 netmask 0xffffff00 broadcast 192.168.2.255
+	inet6 fe80::c4b3:1ff:febb:2764%bridge100 prefixlen 64 scopeid 0x14 
+	Configuration:
+		id 0:0:0:0:0:0 priority 0 hellotime 0 fwddelay 0
+		maxage 0 holdcnt 0 proto stp maxaddr 100 timeout 1200
+		root id 0:0:0:0:0:0 priority 0 ifcost 0 port 0
+		ipfilter disabled flags 0x2
+	member: en42 flags=3<LEARNING,DISCOVER>
+	        ifmaxaddr 0 port 17 priority 0 path cost 0
+	member: en3 flags=3<LEARNING,DISCOVER>
+	        ifmaxaddr 0 port 18 priority 0 path cost 0
+	Address cache:
+	nd6 options=201<PERFORMNUD,DAD>
+	media: autoselect
+	status: active 
+
+-Tue Oct  8 13:51:11 CEST 2019
+ Device: 0x1629DE0450802E
+ NetworkName: en42
+ serialNumber: Error: The user has not yet responded to the pairing request. (com.apple.configurator.MobileDeviceKit.amd.error -402653034)
+ Connected to :
+ bridge100: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=3<RXCSUM,TXCSUM>
+	ether c6:b3:01:bb:27:64 
+	inet 192.168.2.1 netmask 0xffffff00 broadcast 192.168.2.255
+	inet6 fe80::c4b3:1ff:febb:2764%bridge100 prefixlen 64 scopeid 0x14 
+	Configuration:
+		id 0:0:0:0:0:0 priority 0 hellotime 0 fwddelay 0
+		maxage 0 holdcnt 0 proto stp maxaddr 100 timeout 1200
+		root id 0:0:0:0:0:0 priority 0 ifcost 0 port 0
+		ipfilter disabled flags 0x2
+	member: en42 flags=3<LEARNING,DISCOVER>
+	        ifmaxaddr 0 port 17 priority 0 path cost 0
+	member: en3 flags=3<LEARNING,DISCOVER>
+	        ifmaxaddr 0 port 18 priority 0 path cost 0
+	Address cache:
+		1e:5c:f2:54:1e:7d Vlan1 en3 1200 flags=0<>
+	nd6 options=201<PERFORMNUD,DAD>
+	media: autoselect
+	status: active 
+
