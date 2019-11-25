@@ -9,8 +9,10 @@ iosFile="$DIR/Lists/iosList.csv"
 deviceFile="$DIR/Lists/DeviceList.csv"
 ##path for the bloblist
 bloblist="$DIR/Lists/BlobList.csv"
-##path to TSSCHEKER
-tssPath="$DIR/tsschecker_macos"
+##path to TSSCHECKER_OLD
+# tssPath="$DIR/tsschecker_macos"
+##path to TSSCHECKER_NEW
+tssPath="$DIR/tsschecker"
 #setting the delimiter
 IFS=";"
 #Fix the date Variable
