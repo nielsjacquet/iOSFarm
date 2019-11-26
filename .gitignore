@@ -1,2 +1,5 @@
 ##ignore not using folder
 Not_using/
+
+##Ignore DS_Store
+.DS_Store
