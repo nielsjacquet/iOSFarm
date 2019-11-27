@@ -3,3 +3,6 @@ Not_using/
 
 ##Ignore DS_Store
 .DS_Store
+
+##Ignore the shsh2 blobs
+.shsh2
