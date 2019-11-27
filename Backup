@@ -1,7 +1,7 @@
 #!/bin/bash
 BKPDir="/Users/Niels/BKP_TEST_IOSFARM"
-##cosmetic functions and Variables
 
+##cosmetic functions and Variables
 ##Colors
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
@@ -10,18 +10,18 @@ NC='\033[0m'
 BLUE='\033[0;34m'
 
 ##Break function for readabillity
-function BR {
+BR()
+{
   echo "  "
 }
 
 ##DoubleBreak function for readabillity
-function DBR {
+DBR()
+{
   echo " "
   echo " "
 }
 
-##paths:
-#fixDate=$(date)
 fixDate=$(date +"%Y%m%d - %Hh%M")
 echo fixDate: $fixDate
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
@@ -29,15 +29,13 @@ originalBlobSave="$scriptDir/BlobSave"
 echo originalBlobSave: $originalBlobSave
 originalLists="$scriptDir/Lists"
 echo originalLists: $originalLists
-
-
 echo BKPDir: $BKPDir
 dateDir="$BKPDir/$fixDate"
 echo dateDir: $dateDir
-##---------------------------------------------------------------------------
 
 ##DateDir
-function DateDir {
+DateDir()
+{
   if [[ -d "$dateDir" ]]
   then
     printf "${GREEN}Date directory is available${NC}\n"
@@ -50,7 +48,8 @@ function DateDir {
 }
 
 ##Copy
-function copy {
+copy()
+{
   cp -v -p -R "$originalBlobSave" "$dateDir"
   cp -v -p -R "$originalLists" "$dateDir"
 }
