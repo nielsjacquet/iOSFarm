@@ -1,27 +1,4 @@
 #!/bin/bash
-##paths
-
-##Script directory
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-##path for the iosList
-iosFile="$DIR/Lists/iosList.csv"
-##path for the DeviceList
-deviceFile="$DIR/Lists/DeviceList.csv"
-##path for the bloblist
-bloblist="$DIR/Lists/BlobList.csv"
-##path to TSSCHECKER_OLD
-# tssPath="$DIR/tsschecker_macos"
-##path to TSSCHECKER_NEW
-tssPath="$DIR/tsschecker"
-#setting the delimiter
-IFS=";"
-#Fix the date Variable
-DATE=$(date)
-
-
-
-##predeclare
-iosVersionArray=()
 
 ##cosmetic functions and Variables
 ##Colors
@@ -33,21 +10,34 @@ BLUE='\033[0;34m'
 MAGENTA='\033[0;35m'
 
 ##Break function for readabillity
-function BR {
+BR()
+{
   echo "  "
 }
 
 ##DoubleBreak function for readabillity
-function DBR {
+DBR()
+{
   echo " "
   echo " "
 }
 
-##The actual Code
-##---------------
+##paths
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"    ##Script directory
+iosFile="$DIR/Lists/iosList.csv"                                      ##path for the iosList
+deviceFile="$DIR/Lists/DeviceList.csv"                                ##path for the DeviceList
+bloblist="$DIR/Lists/BlobList.csv"                                    ##path for the bloblist
+##path to TSSCHECKER_OLD
+# tssPath="$DIR/tsschecker_macos"
+tssPath="$DIR/tsschecker"                                             ##path to TSSCHECKER_NEW
+IFS=";"                                                               #setting the delimiter
+DATE=$(date)                                                          #Fix the date Variable
+
+iosVersionArray=()                                                    ##predeclare the iosversion array
 
 #function to grab the wanted ios versions
-function ios {
+ios()
+{
   while read ios
   do
     iosVersionArray+=("$ios")
@@ -60,8 +50,8 @@ function ios {
   done
 }
 
-
-function blob {
+blob()
+{
   ##Getting the arraylenght from the devicelist
   deviceArrayLength=$(grep -o  'iP' $deviceFile | wc -l)
   ##Getting the arraylenght form the iosversions
@@ -76,13 +66,14 @@ function blob {
   do
     while read ECID UDID serial devicetype devicemodel
     do
-      ##echos for debugging
+      printf "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-\n"
       printf "${RED}DEBUGGING:${NC}\n"
-      printf "ECID: ${MAGENTA}$ECID${NC}\n"
-      printf "UDID: ${MAGENTA}$UDID${NC}\n"
-      printf "Serial: ${MAGENTA}$serial${NC}\n"
-      printf "devicetype: ${MAGENTA}$devicetype${NC}\n"
-      printf "devicemodel: ${MAGENTA}$devicemodel${NC}\n"
+      printf "${BLUE}ECID: $ECID\n"
+      printf "UDID: $UDID\n"
+      printf "Serial: $serial\n"
+      printf "devicetype: $devicetype\n"
+      printf "devicemodel: $devicemodel${NC}\n"
+
       ##check for BlobSave directory
       if [[ -d "$DIR/BlobSave" ]]
       then
@@ -111,11 +102,11 @@ function blob {
       ## getting the blob
       #BlobSavePath
       BlobSavePath="$DIR/BlobSave/$serial/$iosVersion"
-      #$tssPath -d $devicetype -e $ECID -i $iosVersion --boardconfig "$devicemodel" -s --save-path $BlobSavePath
       $tssPath -d "$devicetype" -i "$iosVersion" --boardconfig "$devicemodel" -e "$ECID" -s --save-path "$BlobSavePath"
       pathforCSV=$(ls -rt  $BlobSavePath  | tail -n 1)
       echo "$serial;$ECID;$iosVersion;$(date);$pathforCSV;$BlobSavePath/$pathforCSV" >> $bloblist
       printf "${YELLOW}Blob saved to: $BlobSavePath ${NC}\n"
+      printf "~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-\n"
       BR
 
     done < $deviceFile
