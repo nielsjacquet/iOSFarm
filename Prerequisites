@@ -22,7 +22,7 @@ function DBR {
 
 ##paths:
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-TSS="$DIR/tsschecker_macos"
+TSS="$DIR/tsschecker"
 GetBlobFromFile="$DIR/GetBlobFromFile"
 autoexecA="$DIR/autoexecA"
 autoexecD="$DIR/autoexecD"
@@ -30,7 +30,8 @@ CreateDeviceList="$DIR/CreateDeviceList"
 StartExec="$DIR/StartExec"
 
 ##URLs
-URL="http://jakkie.be/OSX"
+#URL="http://jakkie.be/OSX"
+URL="https://github.com/nielsjacquet/iOSFarm/blob/master"
 
 ##arrays
 textArray=()
@@ -109,17 +110,17 @@ function mobiledevice {
 function tsschecker_macos {
   if [ -e "$TSS" ]
   then
-    printf "${GREEN}VERIFIED: 'tsschecker_macos' is present${NC}\n"
+    printf "${GREEN}VERIFIED: 'tsschecker' is present${NC}\n"
     BR
-    chmod u+x $DIR/tsschecker_macos
+    chmod u+x $DIR/tsschecker
     ((ok++))
     tc=1
   else
-    printf "${RED}ERROR: 'tsschecker_macos' is abscent${NC}\n"
+    printf "${RED}ERROR: 'tsschecker' is abscent${NC}\n"
     BR
-    printf "${YELLOW}Downloading tsschecker_macos\n"
+    printf "${YELLOW}Downloading tsschecker\n"
     BR
-    curl -O $URL/tsschecker_macos
+    curl -O $URL/tsschecker
     printf "${NC}\n"
     ((ok++))
     tsschecker_macos
