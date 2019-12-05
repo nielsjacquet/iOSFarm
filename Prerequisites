@@ -37,24 +37,24 @@ URL="https://github.com/nielsjacquet/iOSFarm/blob/master"
 textArray=()
 ##Variables
 ok=0
-ac=0 #presence of appleConfigurator
-hb=0 #presence of homebrew
-md=0 #presence of mobiledevice
-tc=0 #presence of tsschecker_macos
-bs=0 #presence of blobscript
-aa=0 #presence of autoexecA
-ad=0 #presence of autoexecD
-cdl=0 #presence of CreateDeviceList
-se=0 #presence of StartExec
-
-bsdl=0 #blobscript download
+ac=0                      #presence of appleConfigurator
+hb=0                      #presence of homebrew
+md=0                      #presence of mobiledevice
+tc=0                      #presence of tsschecker_macos
+bs=0                      #presence of blobscript
+aa=0                      #presence of autoexecA
+ad=0                      #presence of autoexecD
+cdl=0                     #presence of CreateDeviceList
+se=0                      #presence of StartExec
+bsdl=0                    #blobscript download
 
 ##prerequisites Check
 printf "${YELLOW}Checking the prerequisites for the iOSFarm scripts${NC}\n"
 BR
 
 ##check for apple Configurator
-function appleConfigurator {
+appleConfigurator()
+{
   if open -Ra "apple Configurator 2"
   then
     printf "${GREEN}VERIFIED: 'apple Configurator 2' is installed${NC}\n"
@@ -71,7 +71,8 @@ function appleConfigurator {
 }
 
 ##check for Homebrew
-function homebrew {
+homebrew()
+{
   which -s brew
   if [[ $? != 0 ]] ; then
     printf "${RED}ERROR: 'Homebrew' is not installed${NC}\n"
@@ -89,7 +90,8 @@ function homebrew {
 }
 
 ##check for mobiledevice
-function mobiledevice {
+mobiledevice()
+{
   which -s mobiledevice
   if [[ $? != 0 ]] ; then
     printf "${RED}ERROR: 'mobiledevice' is not installed${NC}\n"
@@ -107,7 +109,8 @@ function mobiledevice {
 }
 
 ##check for tsschecker_macos
-function tsschecker_macos {
+tsschecker()
+{
   if [ -e "$TSS" ]
   then
     printf "${GREEN}VERIFIED: 'tsschecker' is present${NC}\n"
@@ -123,12 +126,13 @@ function tsschecker_macos {
     curl -O $URL/tsschecker
     printf "${NC}\n"
     ((ok++))
-    tsschecker_macos
+    tsschecker
   fi
 }
 
 ##check for blobscript
-function blobscript {
+blobscript()
+{
   if [ -e "$GetBlobFromFile" ]
   then
     printf "${GREEN}VERIFIED: 'GetBlobFromFile' is present${NC}\n"
@@ -149,7 +153,8 @@ function blobscript {
 }
 
 ##check for autoexecA
-function autoexecA {
+autoexecA()
+{
   if [ -e "$autoexecA" ]
   then
     printf "${GREEN}VERIFIED: 'autoexecA' is present${NC}\n"
@@ -170,7 +175,8 @@ function autoexecA {
 }
 
 ##check for autoexecD
-function autoexecD {
+autoexecD()
+{
   if [ -e "$autoexecD" ]
   then
     printf "${GREEN}VERIFIED: 'autoexecD' is present${NC}\n"
@@ -191,7 +197,8 @@ function autoexecD {
 }
 
 ##check for CreateDeviceList
-function CreateDeviceList {
+CreateDeviceList()
+{
   if [ -e "$CreateDeviceList" ]
   then
     printf "${GREEN}VERIFIED: 'CreateDeviceList' is present${NC}\n"
@@ -212,7 +219,8 @@ function CreateDeviceList {
 }
 
 ##check for StartExec
-function StartExec {
+StartExec()
+{
   if [ -e "$StartExec" ]
   then
     printf "${GREEN}VERIFIED: 'StartExec' is present${NC}\n"
@@ -235,7 +243,7 @@ function StartExec {
 appleConfigurator
 homebrew
 mobiledevice
-tsschecker_macos
+tsschecker
 blobscript
 autoexecA
 autoexecD
