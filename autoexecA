@@ -15,12 +15,14 @@ NC='\033[0m'
 BLUE='\033[0;34m'
 
 ##Break function for readabillity
-function BR {
+BR()
+{
   echo "  "
 }
 
 ##DoubleBreak function for readabillity
-function DBR {
+DBR()
+{
   echo " "
   echo " "
 }
@@ -40,7 +42,8 @@ printf "${YELLOW}Please enter the sudo password${NC}\n"
 read -s password
 
 #Checking for Bridge100
-function checkBR100 {
+checkBR100()
+{
   ##Get the connectionlis (only names)
   str=$(ifconfig -l -u)
   ##define the delimiter
@@ -77,7 +80,8 @@ function checkBR100 {
 }
 
 #If bridge100 does not exists
-function noBR100 {
+noBR100()
+{
   printf "${RED}bridge100 is not present${NC}\n"
   BR
   pause 'Press [Enter] key to continue...'
@@ -127,7 +131,8 @@ function noBR100 {
 checkBR100
 
 #conversion from ECID environement Variables to MAC address via cfgutil
-function ECIDToMAC {
+ECIDToMAC()
+{
   macAddressFull=$(cfgutil -e $ECID get wifiAddress)
   echo $macAddressFull
 }
@@ -135,14 +140,16 @@ macAddressFullFromFunction=$(ECIDToMAC)
 printf "${GREEN}Getting MACaddress: $macAddressFullFromFunction${NC}\n"
 
 #remove the first 3 characters and the last 3 characters
-function macClean {
+macClean()
+{
   echo $macAddressFullFromFunction | cut -d ":" -f 2,3,4,5
 }
 macCleanFunction=$(macClean)
 printf "${GREEN}Clean up the MACaddress: $macCleanFunction${NC}\n"
 
 #fetching network connenction from shortend MAC address
-function USBConnectionName {
+USBConnectionName()
+{
   USBConnectionNameFull=$(ifconfig | grep -1 $macCleanFunction)
   echo $USBConnectionNameFull
 }
@@ -151,7 +158,8 @@ printf "${GREEN}Getting the network name from the USB connection${NC}\n $USBConn
 BR
 
 #parse only the network name from the network connection
-function USBConnectionNameShort {
+USBConnectionNameShort()
+{
   USBConnectionNameCutoff=${USBConnectionNameFullFromFuncion%%:*}
   echo $USBConnectionNameCutoff
 }
@@ -160,7 +168,8 @@ printf "${GREEN}Parsing only the connection name: $EN${NC}\n"
 BR
 
 #function to add the "enxx" to bridge100
-function addToBridge {
+addToBridge()
+{
   printf "${YELLOW}adding ${GREEN} $EN ${YELLOW} to ${GREEN} bridge100 ${NC} \n "
   BR
   ##add the en to bridge100
@@ -190,7 +199,8 @@ addToBridge
 
 ##Blob
 
-function blob {
+blob()
+{
   if cat $deviceFile | grep $ECID
   then
     printf "${GREEN}Phone present in the BLOB database${NC}\n"
@@ -214,14 +224,16 @@ blob
 
 #output Log
 #function to get serialNumber
-function getSerialNumber {
+getSerialNumber()
+{
   serialNumber=$(cfgutil -e $ECID get serialNumber)
   echo $serialNumber
 }
 sn=$(getSerialNumber)
 
 #funtion to get bridge100 for logging
-function br100Log {
+br100Log()
+{
   br100LogText= ifconfig bridge100
   echo $br100LogText
 }

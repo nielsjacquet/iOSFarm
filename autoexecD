@@ -15,12 +15,14 @@ NC='\033[0m'
 BLUE='\033[0;34m'
 
 ##Break function for readabillity
-function BR {
+BR()
+{
     echo "  "
 }
 
 ##DoubleBreak function for readabillity
-function DBR {
+DBR()
+{
   echo " "
   echo " "
 }
